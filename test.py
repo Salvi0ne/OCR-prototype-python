@@ -8,9 +8,6 @@ import json
 import requests
 from datetime import datetime
 
-# Set up OpenAI API key
-openai.api_key = "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"
-
 def preprocess_image(image_path):
     try:
         img = cv2.imread(image_path)
