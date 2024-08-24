@@ -9,7 +9,8 @@ This Python script processes receipt images using OCR technology. It extracts da
 - User confirmation of extracted data
 - Excel output
 
-Requirements: OpenCV, Pytesseract, Pillow, pandas, openpyxl
+Requirements: OpenCV, Pytesseract, Pillow, pandas, openpyxl, postgresql
+pip install flask flask_sqlalchemy psycopg2-binary python-dotenv - for app.py
 
 Usage: Run `main()` function and follow prompts to input receipt image paths.
 
