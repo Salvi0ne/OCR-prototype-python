@@ -2,8 +2,9 @@ from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import os
+import traceback
 from dotenv import load_dotenv
-import openai
+import openai  # New import
 
 # Load environment variables
 load_dotenv()
@@ -17,7 +18,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 # Set up OpenAI API key
-openai.api_key = os.getenv("OPENAI_API_KEY")
+openai.api_key = os.getenv("OPENAI_API_KEY")  # New line
 
 class Receipt(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -62,6 +63,28 @@ def get_receipt(receipt_id):
 @app.route('/health', methods=['GET'])
 def health_check():
     return jsonify({"status": "healthy"}), 200
+
+# New route for parsing receipts
+@app.route('/parse_receipt', methods=['POST'])
+def parse_receipt():
+    text = request.json.get('text', '')
+    if not text:
+        return jsonify({"error": "No text provided"}), 400
+    
+    try:
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": "You are a receipt parser. Extract the date, total amount, and category."},
+                {"role": "user", "content": f"Parse this receipt: {text}"}
+            ]
+        )
+        parsed_data = response.choices[0].message['content']
+        return jsonify({"response": parsed_data})
+    except Exception as e:
+        app.logger.error(f"Error in parse_receipt: {str(e)}")
+        app.logger.error(traceback.format_exc())
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
     with app.app_context():

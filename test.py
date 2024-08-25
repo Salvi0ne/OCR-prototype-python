@@ -30,36 +30,21 @@ def extract_text(preprocessed_image):
         print(f"Error in text extraction: {str(e)}")
         return None
 
-def parse_receipt_with_openai(text):
+# Modified function to use the Flask server for parsing
+def parse_receipt_with_server(text):
     try:
         api_url = os.getenv("API_ENDPOINT", "http://localhost:5000")
+        print(f"Sending request to: {api_url}/parse_receipt")
+        print(f"Request payload: {{'text': {text}}}")
         response = requests.post(f"{api_url}/parse_receipt", json={'text': text})
+        print(f"Response status code: {response.status_code}")
+        print(f"Response content: {response.text}")
         response.raise_for_status()
-        
-        ai_response = response.json().get('response')
-        
-        # Try to parse the JSON response
-        try:
-            parsed_response = json.loads(ai_response)
-        except json.JSONDecodeError:
-            # If JSON parsing fails, try to extract information using regex
-            date_match = re.search(r'"date"\s*:\s*"([^"]+)"', ai_response)
-            total_match = re.search(r'"total"\s*:\s*"([^"]+)"', ai_response)
-            category_match = re.search(r'"category"\s*:\s*"([^"]+)"', ai_response)
-
-            parsed_response = {
-                'date': date_match.group(1) if date_match else "Date not found",
-                'total': total_match.group(1) if total_match else "Total not found",
-                'category': category_match.group(1) if category_match else "Category not found"
-            }
-
-        return {
-            'Date': parsed_response.get('date', "Date not found"),
-            'Total': parsed_response.get('total', "Total not found"),
-            'Category': parsed_response.get('category', "Category not found")
-        }
-    except Exception as e:
-        print(f"Error in AI-based receipt parsing: {str(e)}")
+        return response.json().get('response')
+    except requests.RequestException as e:
+        print(f"Request failed: {e}")
+        if hasattr(e, 'response') and e.response is not None:
+            print(f"Error response content: {e.response.text}")
         return None
 
 def user_confirm_data(data):
@@ -89,33 +74,40 @@ def process_receipt(image_path):
     if text is None:
         return None
 
-    receipt_data = parse_receipt_with_openai(text)
+    receipt_data = parse_receipt_with_server(text)
     if receipt_data is None:
         return None
 
-    confirmed_data = user_confirm_data(receipt_data)
+    # Assume the server returns a string, parse it into a dictionary
+    parsed_data = {}
+    for line in receipt_data.split('\n'):
+        if ':' in line:
+            key, value = line.split(':', 1)
+            parsed_data[key.strip()] = value.strip()
+
+    confirmed_data = user_confirm_data(parsed_data)
 
     # Clean and convert the total amount
-    total_str = confirmed_data['Total']
-    total_str = re.sub(r'[^\d.]', '', total_str)  # Remove all non-digit and non-decimal point characters
+    total_str = confirmed_data.get('Total', '0')
+    total_str = re.sub(r'[^\d.]', '', total_str)
     
     try:
         total_float = float(total_str)
     except ValueError:
-        print(f"Error: Unable to convert '{confirmed_data['Total']}' to a float. Please enter the total manually.")
+        print(f"Error: Unable to convert '{total_str}' to a float. Please enter the total manually.")
         total_float = float(input("Enter the total amount as a number (e.g., 29.01): "))
 
     # Prepare data for API
     api_data = {
-        'date': confirmed_data['Date'],
-        'category': confirmed_data['Category'],
+        'date': confirmed_data.get('Date', datetime.now().isoformat()),
+        'category': confirmed_data.get('Category', 'Other'),
         'total': total_float
     }
 
     # Send data to API
-    api_url = "http://localhost:5000/receipts"
+    api_url = os.getenv("API_ENDPOINT", "http://localhost:5000")
     try:
-        response = requests.post(api_url, json=api_data, timeout=5)  # Added timeout
+        response = requests.post(f"{api_url}/receipts", json=api_data, timeout=5)
         if response.status_code == 201:
             receipt_id = list(response.json().keys())[0]
             print(f"Receipt data sent successfully. Receipt ID: {receipt_id}")
@@ -123,7 +115,7 @@ def process_receipt(image_path):
             print(f"Failed to send receipt data: {response.text}")
     except requests.RequestException as e:
         print(f"Error sending data to API: {str(e)}")
-        print("Make sure your Flask API server (app.py) is running on localhost:5000")
+        print("Make sure your Flask API server (app.py) is running on the correct endpoint")
 
     return confirmed_data
 
