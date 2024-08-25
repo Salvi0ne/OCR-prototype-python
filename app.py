@@ -5,6 +5,8 @@ import os
 import traceback
 from dotenv import load_dotenv
 import openai  # New import
+import logging
+logging.basicConfig(level=logging.DEBUG)
 
 # Load environment variables
 load_dotenv()
@@ -45,9 +47,8 @@ def add_receipt():
         db.session.add(new_receipt)
         db.session.commit()
         return jsonify({new_receipt.id: new_receipt.to_dict()}), 201
-    except KeyError as e:
-        return jsonify({'error': f'Missing required field: {str(e)}'}), 400
-    except ValueError as e:
+    except Exception as e:
+        db.session.rollback()
         return jsonify({'error': str(e)}), 400
 
 @app.route('/receipts', methods=['GET'])
@@ -85,6 +86,8 @@ def parse_receipt():
         app.logger.error(f"Error in parse_receipt: {str(e)}")
         app.logger.error(traceback.format_exc())
         return jsonify({"error": str(e)}), 500
+    
+    
 
 if __name__ == '__main__':
     with app.app_context():
