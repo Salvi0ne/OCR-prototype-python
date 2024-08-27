@@ -6,6 +6,8 @@
 - Go to design>OCR-2.excalidraw, export this file to https://excalidraw.com/ or click here [excalidraw](https://excalidraw.com/) to see the design..
 
 
+## DEV
+
 This Python script processes receipt images using OCR technology. It extracts date and total amount information, categorizes spending, and saves the data to an Excel file. Features include:
 
 - Image preprocessing
