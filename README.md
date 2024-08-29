@@ -2,7 +2,7 @@
 
 ## Design
 
-- Go to design>OCR-fri30aug-0010.excalidraw, export this file to https://excalidraw.com/ or click here [excalidraw](https://excalidraw.com/) to see the design..
+- Go to design>OCR.excalidraw, export this file to https://excalidraw.com/ or click here [excalidraw](https://excalidraw.com/) to see the design..
 
 
 ## DEV
