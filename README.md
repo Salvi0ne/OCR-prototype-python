@@ -1,9 +1,8 @@
 # OCR Receipt Processor
 
-
 ## Design
 
-- Go to design>OCR-2.excalidraw, export this file to https://excalidraw.com/ or click here [excalidraw](https://excalidraw.com/) to see the design..
+- Go to design>OCR-fri30aug-0010.excalidraw, export this file to https://excalidraw.com/ or click here [excalidraw](https://excalidraw.com/) to see the design..
 
 
 ## DEV
@@ -23,3 +22,6 @@ pip install flask flask_sqlalchemy psycopg2-binary python-dotenv - for app.py
 Usage: Run `main()` function and follow prompts to input receipt image paths.
 
 Note: This is a prototype with room for improvement in accuracy and feature set.
+
+## LINK
+https://github.com/Salvi0ne/OCR-prototype-python
