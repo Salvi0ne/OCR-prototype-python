@@ -8,17 +8,12 @@ import requests
 from datetime import datetime
 from dotenv import load_dotenv
 
-# Load environment variables
 load_dotenv()
 
-# Configuration
+SECURITY_KEY = os.getenv("SECURITY_KEY", "123456789qwertyuiop")
+
 DATE_FORMATS = [
-    '%d/%m/%Y',  # 21/06/2024
-    '%m/%d/%Y',  # 06/21/2024
-    '%Y/%m/%d',  # 2024/06/21
-    '%b %d %Y',  # Jun 21 2024
-    '%d %b %Y',  # 21 Jun 2024
-    '%Y-%m-%d',  # 2024-06-21 (ISO format)
+    '%d/%m/%Y', '%m/%d/%Y', '%Y/%m/%d', '%b %d %Y', '%d %b %Y', '%Y-%m-%d',
 ]
 
 def preprocess_image(image_path):
@@ -47,7 +42,6 @@ def parse_date(date_string):
         except ValueError:
             pass
 
-    # If no format matches, try to extract date components
     date_components = re.findall(r'\d+|\b(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\b', date_string)
     if len(date_components) == 3:
         for fmt in ['%d %m %Y', '%m %d %Y', '%Y %m %d', '%d %b %Y', '%b %d %Y']:
@@ -67,8 +61,10 @@ def parse_total(total_string):
 
 def parse_receipt_with_server(text):
     api_url = os.getenv("API_ENDPOINT", "http://localhost:5000")
+    security_key = os.getenv("SECURITY_KEY")
     try:
-        response = requests.post(f"{api_url}/parse_receipt", json={'text': text})
+        headers = {"Security-Key": security_key}
+        response = requests.post(f"{api_url}/parse_receipt", json={'text': text}, headers=headers)
         response.raise_for_status()
         parsed_response = response.json()
         receipt_text = parsed_response.get('response', '')
@@ -93,8 +89,10 @@ def parse_receipt_with_server(text):
 
 def send_to_api(api_data):
     api_url = os.getenv("API_ENDPOINT", "http://localhost:5000")
+    security_key = os.getenv("SECURITY_KEY")
     try:
-        response = requests.post(f"{api_url}/receipts", json=api_data, timeout=5)
+        headers = {"Security-Key": security_key}
+        response = requests.post(f"{api_url}/receipts", json=api_data, headers=headers, timeout=5)
         if response.status_code == 201:
             receipt_id = list(response.json().keys())[0]
             print(f"Receipt data sent successfully. Receipt ID: {receipt_id}")
@@ -155,7 +153,6 @@ def process_receipt(image_path):
 
     return confirmed_data
 
-# Main execution
 if __name__ == "__main__":
     while True:
         image_path = input("Enter the path to the receipt image (or 'quit' to exit): ")
