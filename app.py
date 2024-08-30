@@ -4,23 +4,36 @@ from datetime import datetime
 import os
 import traceback
 from dotenv import load_dotenv
-import openai  # New import
+import openai
 import logging
+from flask_cors import CORS
+from functools import wraps
+
 logging.basicConfig(level=logging.DEBUG)
 
-# Load environment variables
 load_dotenv()
 
 app = Flask(__name__)
+CORS(app)
 
-# PostgreSQL database configuration
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URL")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 
-# Set up OpenAI API key
-openai.api_key = os.getenv("OPENAI_API_KEY")  # New line
+openai.api_key = os.getenv("OPENAI_API_KEY")
+
+SECURITY_KEY = os.getenv("SECURITY_KEY", "123456789qwertyuiop")
+
+def require_security_key(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        provided_key = request.headers.get('Security-Key')
+        if provided_key and provided_key == SECURITY_KEY:
+            return f(*args, **kwargs)
+        else:
+            return jsonify({"error": "Invalid or missing security key"}), 401
+    return decorated
 
 class Receipt(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -36,6 +49,7 @@ class Receipt(db.Model):
         }
 
 @app.route('/receipts', methods=['POST'])
+@require_security_key
 def add_receipt():
     data = request.json
     try:
@@ -52,11 +66,13 @@ def add_receipt():
         return jsonify({'error': str(e)}), 400
 
 @app.route('/receipts', methods=['GET'])
+@require_security_key
 def get_receipts():
     receipts = Receipt.query.all()
     return jsonify({receipt.id: receipt.to_dict() for receipt in receipts})
 
 @app.route('/receipts/<int:receipt_id>', methods=['GET'])
+@require_security_key
 def get_receipt(receipt_id):
     receipt = Receipt.query.get_or_404(receipt_id)
     return jsonify({receipt_id: receipt.to_dict()})
@@ -65,8 +81,8 @@ def get_receipt(receipt_id):
 def health_check():
     return jsonify({"status": "healthy"}), 200
 
-# New route for parsing receipts
 @app.route('/parse_receipt', methods=['POST'])
+@require_security_key
 def parse_receipt():
     text = request.json.get('text', '')
     if not text:
@@ -86,8 +102,6 @@ def parse_receipt():
         app.logger.error(f"Error in parse_receipt: {str(e)}")
         app.logger.error(traceback.format_exc())
         return jsonify({"error": str(e)}), 500
-    
-    
 
 if __name__ == '__main__':
     with app.app_context():
