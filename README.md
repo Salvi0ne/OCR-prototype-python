@@ -64,13 +64,24 @@ pip install flask flask_sqlalchemy psycopg2-binary python-dotenv - for app.py
 
 Usage: Run `main()` function and follow prompts to input receipt image paths.
 
-Note: This is a prototype with room for improvement in accuracy and feature set.
-
 ## LINK
 https://github.com/Salvi0ne/OCR-prototype-python
 
 ## File Naming Conventions
 - https://google.github.io/styleguide/pyguide.html#3164-guidelines-derived-from-guidos-recommendations
+
+## API (In Progress)
+
+- API Server based on Rest API
+- To run API Server, run on your terminal: 
+
+```bash
+python/python3 API/app.py
+```
+
+
+
+
 
 
 
