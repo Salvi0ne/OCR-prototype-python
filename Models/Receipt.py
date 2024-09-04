@@ -1,7 +1,4 @@
-from flask import Flask, request, jsonify
-from flask_sqlalchemy import SQLAlchemy
-
-db = SQLAlchemy(app)
+from app import db
 
 class Receipt(db.Model):
     id = db.Column(db.Integer, primary_key=True)
