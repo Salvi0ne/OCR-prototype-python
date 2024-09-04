@@ -76,7 +76,11 @@ https://github.com/Salvi0ne/OCR-prototype-python
 - To run API Server, run on your terminal: 
 
 ```bash
-python/python3 API/app.py
+python API/app.py
+```
+Or
+```bash
+python3 API/app.py
 ```
 
 
