@@ -69,5 +69,8 @@ Note: This is a prototype with room for improvement in accuracy and feature set.
 ## LINK
 https://github.com/Salvi0ne/OCR-prototype-python
 
+## File Naming Conventions
+- https://google.github.io/styleguide/pyguide.html#3164-guidelines-derived-from-guidos-recommendations
+
 
 
