@@ -45,7 +45,7 @@ If you encounter any issues, please contact [Your Name/Contact Info].
 
 ## Design
 
-- Go to design>OCR.excalidraw, export this file to https://excalidraw.com/ or click here [excalidraw](https://excalidraw.com/) to see the design..
+- Go to Design/OCR.excalidraw, export this file to https://excalidraw.com/ or click here [excalidraw](https://excalidraw.com/) to see the design..
 
 
 ## DEV
@@ -70,22 +70,26 @@ https://github.com/Salvi0ne/OCR-prototype-python
 ## File Naming Conventions
 - https://google.github.io/styleguide/pyguide.html#3164-guidelines-derived-from-guidos-recommendations
 
+
+## Features
+
+### DB Connection Postgres
+To Connect with posgres DB:
+- Check package: database_connection/connect.py 
+
+```
+app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL") // .env example: DATABASE_URL=postgresql://postgres_local:@localhost/hello_world
+```
+
 ## API (In Progress)
 
 - API Server based on Rest API
 - To run API Server, run on your terminal: 
 
 ```bash
-python API/app.py
+python -m api.app
 ```
 Or
 ```bash
-python3 API/app.py
+python3 -m api.app
 ```
-
-
-
-
-
-
-
