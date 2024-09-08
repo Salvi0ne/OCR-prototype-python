@@ -1,6 +1,6 @@
 from app import db
 
-class Receipt(db.Model):
+class Receipt():
     id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.DateTime, nullable=False)
     category = db.Column(db.String(50), nullable=False)

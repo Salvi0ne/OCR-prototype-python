@@ -1,6 +1,6 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from app import Receipt
+from app_before import Receipt
 from dotenv import load_dotenv
 import os
 
