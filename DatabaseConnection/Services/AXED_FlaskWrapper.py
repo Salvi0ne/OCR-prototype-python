@@ -3,14 +3,16 @@ from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text
 import os
+import sys
 from dotenv import load_dotenv
 
 load_dotenv()
 
+# .... OBSOLETE / AXED ....  Not sustainabled 
 
 class FlaskWrapper:
-    def __init__(self):
-        self.db = self.connect_database(self)
+    def __init__(self, app=None):
+        self.db = self.connect_database(self, app)
 
     @property
     def db(self):
@@ -29,12 +31,16 @@ class FlaskWrapper:
         self._app = value
 
     @staticmethod
-    def connect_database(self):
-        self.app = Flask(__name__)
-        CORS(self.app)
-        self.app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
-        self.app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-        db = SQLAlchemy(self.app)
+    def connect_database(self, app):
+        if app is None:
+            print("Failed to connect to the database. Please check your connection settings.")
+            sys.exit()
+        # self.app = Flask(__name__)
+        CORS(app)
+        app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
+        app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+        db = SQLAlchemy(app)
+        self.app = app
         return db
 
     def validate_db_connection(self):

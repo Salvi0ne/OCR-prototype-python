@@ -1,5 +1,19 @@
 # OCR Receipt Processor
 
+### DEV
+
+This Python script processes receipt images using OCR technology. It extracts date and total amount information, categorizes spending, and saves the data to an Excel file. Features include:
+
+- Image preprocessing
+- Text extraction using Tesseract OCR
+- Date and total amount parsing
+- Spending categorization
+- User confirmation of extracted data
+- Excel output
+
+Requirements: OpenCV, Pytesseract, Pillow, pandas, openpyxl, postgresql
+pip install flask flask_sqlalchemy psycopg2-binary python-dotenv - for app.py
+
 -  Install Python 3.8 or higher if not already installed.
 
 -  Clone the repository (if not already done):
@@ -40,29 +54,20 @@
 
 Note: Always ensure the Cloud SQL Proxy is running when working with the application.
 
-If you encounter any issues, please contact [Your Name/Contact Info].
+### To run server, run on your terminal:
+
+```bash
+python -m app_dev.py
+```
+Or
+```bash
+python3 -m app_dev.py
+```
 
 
 ## Design
 
 - Go to Design/OCR.excalidraw, export this file to https://excalidraw.com/ or click here [excalidraw](https://excalidraw.com/) to see the design..
-
-
-## DEV
-
-This Python script processes receipt images using OCR technology. It extracts date and total amount information, categorizes spending, and saves the data to an Excel file. Features include:
-
-- Image preprocessing
-- Text extraction using Tesseract OCR
-- Date and total amount parsing
-- Spending categorization
-- User confirmation of extracted data
-- Excel output
-
-Requirements: OpenCV, Pytesseract, Pillow, pandas, openpyxl, postgresql
-pip install flask flask_sqlalchemy psycopg2-binary python-dotenv - for app.py
-
-Usage: Run `main()` function and follow prompts to input receipt image paths.
 
 ## LINK
 https://github.com/Salvi0ne/OCR-prototype-python
@@ -70,26 +75,50 @@ https://github.com/Salvi0ne/OCR-prototype-python
 ## File Naming Conventions
 - https://google.github.io/styleguide/pyguide.html#3164-guidelines-derived-from-guidos-recommendations
 
+## Test
 
-## Features
-
-### DB Connection Postgres
-To Connect with posgres DB:
-- Check package: database_connection/connect.py 
-
+**Install `pytest`** first:
+```bash
+pip install pytest
 ```
-app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL") // .env example: DATABASE_URL=postgresql://postgres_local:@localhost/hello_world
+or
+```bash
+pip3 install pytest
 ```
 
-## API (In Progress)
-
-- API Server based on Rest API
-- To run API Server, run on your terminal: 
+### To run all Tests:
 
 ```bash
-python -m api.app
+python -m pytest
 ```
 Or
 ```bash
-python3 -m api.app
+python3 -m pytest
 ```
+
+### Every test file should have:
+- prefix file name ( eg: test_*.py )
+- file name use `snake_case` ( eg: test_snake_case )
+- test class use `PascalCase` ( eg: class TestPascalCase(unittest.TestCase) )
+
+## Features
+
+### PostgreSQL Database Connection
+
+To configure the PostgreSQL database connection, follow these steps:
+
+1. Add the following configuration to your `.env` file:
+
+    ```plaintext
+    DATABASE_URL=postgresql://<username>:<password>@<host>/<database_name>
+    ```
+
+2. Replace the placeholders with the appropriate values:
+    - **`<username>`**: Your PostgreSQL username (e.g., `postgres_local`).
+    - **`<password>`**: The password for the PostgreSQL user (leave blank if not required).
+    - **`<host>`**: The database host (e.g., `localhost` for local development).
+    - **`<database_name>`**: The name of your PostgreSQL database (e.g., `hello_world`).
+
+**Example**:
+```plaintext
+DATABASE_URL=postgresql://postgres_local:abc123@localhost/hello_world

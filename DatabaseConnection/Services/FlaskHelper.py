@@ -1,9 +1,11 @@
-from DatabaseConnection.Services.FlaskWrapper import FlaskWrapper
-import sys
+from flask_sqlalchemy import SQLAlchemy
+from dotenv import load_dotenv
+import os
 
-def flask_init_setup():
-    flask = FlaskWrapper()
-    if not flask.validate_db_connection():
-        print("Failed to connect to the database. Please check your connection settings.")
-        sys.exit()
-    return flask
+load_dotenv()
+
+def flask_sqlalchemy(app):
+    app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
+    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+    db = SQLAlchemy(app)
+    return db
