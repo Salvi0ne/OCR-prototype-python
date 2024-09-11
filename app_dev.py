@@ -9,4 +9,7 @@ db = flask_sqlalchemy(app)
 app.register_blueprint(main_blueprint)
 
 if __name__ == "__main__":
+    with app.app_context():
+        # db.create_all() will automatically create any missing tables in the database ( the tables based on ORM Flask in Models Folder )
+        db.create_all()
     app.run(host="0.0.0.0", port=5001, debug=True)

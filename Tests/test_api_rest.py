@@ -1,4 +1,3 @@
-from DatabaseConnection.Services.FlaskHelper import flask_sqlalchemy
 from Routes.route import main_blueprint
 from flask import Flask
 import pytest
