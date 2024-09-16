@@ -5,8 +5,10 @@ import numpy as np
 
 # pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe' # Windows
 # pytesseract.pytesseract.tesseract_cmd = '/usr/local/bin/tesseract' # Mac OS
+print("*******")
+print(f"file path: {__name__}")
 print(pytesseract.pytesseract.tesseract_cmd)
-
+print("*******")
 
 def preprocess_image(receipts_object):
     try:
