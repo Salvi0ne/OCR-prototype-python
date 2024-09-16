@@ -1,9 +1,8 @@
 import pytest
 from flask import Flask
 from Models.models import db
-from app_dev import app as flask_app
+from app import app as flask_app
 import logging
-
 
 """to run test in terminal: python3 -m pytest -s -v or python -m pytest -s -v"""
 @pytest.fixture
