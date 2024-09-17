@@ -1,10 +1,14 @@
+import json
 from Models.models import Receipt as ReceiptModel
 from flask import Blueprint, request, jsonify
-from Services.receipt_processor import preprocess_image, process_receipt
+from Services.receipt_processor import process_list_of_receipts, process_receipt
 from responses.factory.Success import Success
 from responses.factory.Error import Error
 from datetime import datetime
 from uuid import UUID
+from icecream import ic
+from werkzeug.datastructures import FileStorage
+from typing import List
 
 routes = Blueprint("routes", __name__)
 
@@ -24,15 +28,20 @@ def all_receipts():
 @routes.route(BASED_URL + "extract_receipts", methods=["POST"])
 def extract_receipts():
     """Extract receipts from image"""
-    if "receipts" not in request.files:
+    receipts_objects = request.files.getlist('files')
+    ic(receipts_objects)
+    # files = request.files
+    # files = request.form['receipts']
+    # ic(files['files'].read())
+    # return 'ok'
+    if "files" not in request.files:
         return jsonify({"error": "No file part"}), 400
-    # receipts_objects = request.files['receipts']
-    receipts_objects = request.files.getlist("receipts")
-    processed_image = process_receipt(receipts_objects)
-    # processed_image = preprocess_image(receipts_objects)
-    if processed_image is None:
-        return Error("Image processing failed").json_respond()
-    return Success("Image processed successfully", processed_image).json_respond()
+    processed_images = process_list_of_receipts(receipts_objects)
+    if(processed_images is None):
+        return Error("Failed to process images").json_respond()
+
+    ic(processed_images)
+    return Success("Images processed successfully", processed_images).json_respond()
 
 @routes.route(BASED_URL + "save_receipts", methods=["Post"])
 def save_receipts():

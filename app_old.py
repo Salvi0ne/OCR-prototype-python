@@ -4,7 +4,9 @@ from datetime import datetime
 import os
 import traceback
 from dotenv import load_dotenv
-import openai
+from openai import OpenAI
+
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 import logging
 from flask_cors import CORS
 from functools import wraps
@@ -21,7 +23,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 
-openai.api_key = os.getenv("OPENAI_API_KEY")
 
 SECURITY_KEY = os.getenv("SECURITY_KEY", "123456789qwertyuiop")
 
@@ -87,16 +88,14 @@ def parse_receipt():
     text = request.json.get('text', '')
     if not text:
         return jsonify({"error": "No text provided"}), 400
-    
+
     try:
-        response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {"role": "system", "content": "You are a receipt parser. Extract the date, total amount, and category."},
-                {"role": "user", "content": f"Parse this receipt: {text}"}
-            ]
-        )
-        parsed_data = response.choices[0].message['content']
+        response = client.chat.completions.create(model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": "You are a receipt parser. Extract the date, total amount, and category."},
+            {"role": "user", "content": f"Parse this receipt: {text}"}
+        ])
+        parsed_data = response.choices[0].message.content
         return jsonify({"response": parsed_data})
     except Exception as e:
         app.logger.error(f"Error in parse_receipt: {str(e)}")

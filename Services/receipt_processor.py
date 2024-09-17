@@ -1,7 +1,13 @@
+import io
+import json
+import os
 import cv2
 import pytesseract
 from PIL import Image
 import numpy as np
+from openai import OpenAI
+from dotenv import load_dotenv
+
 
 # pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe' # Windows
 # pytesseract.pytesseract.tesseract_cmd = '/usr/local/bin/tesseract' # Mac OS
@@ -9,6 +15,9 @@ print("*******")
 print(f"file path: {__name__}")
 print(pytesseract.pytesseract.tesseract_cmd)
 print("*******")
+
+load_dotenv()
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 def preprocess_image(receipts_object):
     try:
@@ -37,21 +46,45 @@ def preprocess_image(receipts_object):
 
 def extract_text(preprocessed_image):
     try:
-        return pytesseract.image_to_string(Image.fromarray(preprocessed_image))
+
+        text = pytesseract.image_to_string(Image.fromarray(preprocessed_image))
+        # return json.dumps({"text": text})
+        return text
+
     except Exception as e:
         print(f"Error in text extraction: {str(e)}")
         return None
 
+def parse_receipt(text):
+        response = client.chat.completions.create(model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": "You are a receipt parser. Extract the date, total amount, and category."},
+            {"role": "user", "content": f"Parse this receipt to json: {text}"}
+        ])
+        parsed_data = response.choices[0].message.content
+        return parsed_data
 
 def process_receipt(receipts_object):
     preprocessed = preprocess_image(receipts_object)
     if preprocessed is None:
         return None
-
     text = extract_text(preprocessed)
-
     if text is None:
         return None
-    # print(text)
-    # print("---end----")
-    return text
+
+    parsed = parse_receipt(text)
+    if parsed is None:
+        return None
+    return parsed
+    # return json.loads(parsed)
+
+def process_list_of_receipts(receipts_objects):
+    processed_images = []
+    for receipts_object in receipts_objects:
+        image_bytes = receipts_object.read()
+        image_file = io.BytesIO(image_bytes)
+        processed_image = process_receipt(image_file)
+        if processed_image is None:
+            return None
+        processed_images.append(processed_image)
+    return processed_images

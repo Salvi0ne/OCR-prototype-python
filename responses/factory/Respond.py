@@ -16,7 +16,7 @@ class Respond:
             "data": self.data,
             "messages": self.messages
         }
-        return jsonify(response), 200
+        return jsonify(response), self.code
 
     def set_messages(self,__messages):
         """Return the message."""
