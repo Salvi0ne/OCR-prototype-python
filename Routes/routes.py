@@ -19,37 +19,31 @@ def initx():
     return Success("Init System! - 200 OK").json_respond()
 
 
-@routes.route(BASED_URL + "receipts", methods=["GET"])
-def all_receipts():
-    """Get all receipts"""
-    receipts = ReceiptModel.query.all()
-    return Success(None, {receipt.id: receipt.to_dict() for receipt in receipts})
+@routes.route(BASED_URL + "receipts/<string:status>", methods=["GET"])
+def all_receipts(status: str):
+    """Get all receipts based on status"""
+    if status not in ['verified', 'unverified']:
+        return Error("Invalid status. Only 'verified' and 'unverified' are allowed.").json_respond()
+    receipts = ReceiptModel.query.filter_by(status=status).all()
+    if not receipts:
+        return Success("No receipts found with the given status.", {}).json_respond()
+    receipts_dict = [receipt.to_dict() for receipt in receipts]
+    return Success("Retrieved Receipts status: "+status, receipts_dict).json_respond()
 
 
 @routes.route(BASED_URL + "extract_receipts", methods=["POST"])
 def extract_receipts():
     """Extract receipts from image"""
     receipts_objects = request.files.getlist("files")
-    ic(receipts_objects)
-    # files = request.files
-    # files = request.form['receipts']
-    # ic(files['files'].read())
-    # return 'ok'
     if "files" not in request.files:
         return jsonify({"error": "No file part"}), 400
     processed_images = process_list_of_receipts(receipts_objects)
 
     if processed_images is None:
         return Error("Failed to process images").json_respond()
-    # data = [{'category': 'restaurant', 'date': 'Fri 04/07/2017', 'total_amount': '29.01'}]
-    # date = processed_images[0]['date']
     [is_save, message] = ReceiptModel.save_many(processed_images)
     if is_save is False:
         return Error(message).json_respond()
-
-    # category = data[0]['category']
-    # ic("Date:", date)
-    # print("Category:", category)
     return Success("Images processed successfully").json_respond()
 
 

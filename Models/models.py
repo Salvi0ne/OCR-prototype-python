@@ -19,6 +19,7 @@ class Receipt(db.Model):
     def to_dict(self):
         """Return a dictionary representation of the Receipt object."""
         return {
+            "id": self.id,
             "total_amount": self.total_amount,
             "category": self.category,
             "status": self.status,

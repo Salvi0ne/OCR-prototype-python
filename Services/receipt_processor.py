@@ -19,7 +19,6 @@ print("*******")
 load_dotenv()
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-
 def preprocess_image(receipts_object):
     try:
         # Convert file object to a numpy array
@@ -65,7 +64,7 @@ def parse_receipt(text):
                 "role": "system",
                 "content": "You are a receipt parser. Extract the date, total amount, and category.",
             },
-            {"role": "user", "content": f"Parse this receipt to json: {text}"},
+            {"role": "user", "content": f"Parse this receipt text to json string: {text}"},
         ],
     )
     parsed_data = response.choices[0].message.content
