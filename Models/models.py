@@ -6,24 +6,29 @@ from datetime import datetime
 
 db = SQLAlchemy()
 
+
 class Receipt(db.Model):
     id = db.Column(db.Uuid, primary_key=True, default=uuid.uuid4)
-    total = db.Column(db.Float, nullable=True, default=0.0)
+    total_amount = db.Column(db.Float, nullable=True, default=0.0)
     category = db.Column(db.String(100), nullable=True)
-    date = db.Column(db.DateTime, nullable=True)
+    status = db.Column(db.String(100), nullable=True)
+    date = db.Column(db.String(100), nullable=True)
     date_created = db.Column(db.DateTime, nullable=True)
     date_updated = db.Column(db.DateTime, nullable=True)
 
     def to_dict(self):
         """Return a dictionary representation of the Receipt object."""
         return {
-            "date": self.date.isoformat() if self.date else None,
+            "total_amount": self.total_amount,
             "category": self.category,
-            "total": self.total,
+            "status": self.status,
+            "date": self.date,
+            "date_created": self.date_created,
+            "date_updated": self.date_updated
         }
 
     def __repr__(self):
-        return f"<Receipt {self.id}, {self.date}, {self.category}, {self.total}>"
+        return f"<Receipt {self.id}, {self.date}, {self.category}, {self.total_amount}, {self.status}, {self.date_created}>"
 
     def save(self):
         try:
@@ -44,19 +49,23 @@ class Receipt(db.Model):
             return False, str(e)
 
     @staticmethod
-    def save_many(self, mutiple_receipt):
+    def save_many(mutiple_receipt):
         try:
+
             is_valid, message = Receipt.save_many_validator(mutiple_receipt)
             if not is_valid:
                 return False, message
-
             new_receipts = []
+            print("1010Receipt:", mutiple_receipt)
             for receipt_data in mutiple_receipt:
+                print("1011Receipt:", receipt_data)
+                # date=datetime.fromisoformat(receipt_data["date"]),
                 new_receipt = Receipt(
-                    date=datetime.fromisoformat(receipt_data["date"]),
+                    date=receipt_data["date"],
                     category=receipt_data["category"],
-                    total=float(receipt_data["total"]),
+                    total_amount=float(receipt_data["total_amount"]),
                     date_created=datetime.now(),
+                    status=receipt_data["status"],
                 )
                 new_receipts.append(new_receipt)
             db.session.bulk_insert_mappings(
@@ -77,9 +86,9 @@ class Receipt(db.Model):
 
             for receipt_data in mutiple_receipt:
                 receipt = Receipt.query.get(receipt_data["id"])
-                receipt.date = datetime.fromisoformat(receipt_data["date"])
+                receipt.date = receipt_data["date"]
                 receipt.category = receipt_data["category"]
-                receipt.total = float(receipt_data["total"])
+                receipt.total_amount = float(receipt_data["total_amount"])
                 receipt.date_updated = datetime.now()
                 db.session.add(receipt)
             db.session.commit()
@@ -117,17 +126,22 @@ class Receipt(db.Model):
 
     @staticmethod
     def validate_receipt_data(receipt):
-        if "date" not in receipt or "category" not in receipt or "total" not in receipt:
-            return False, "Missing required fields: id, date, category, total"
+        if (
+            "date" not in receipt
+            or "category" not in receipt
+            or "total_amount" not in receipt
+        ):
+            return False, "Missing required fields: id, date, category, total_amount"
+        # try:
+        #     datetime.fromisoformat(receipt["date"])
+        # except ValueError:
+        #     return False, "Invalid date format"
         try:
-            datetime.fromisoformat(receipt["date"])
+            float(receipt["total_amount"])
         except ValueError:
-            return False, "Invalid date format"
-        try:
-            float(receipt["total"])
-        except ValueError:
-            return False, "Invalid total format"
-        if not isinstance(receipt["category"], str):
+            return False, "Invalid total_amount format"
+        if type(receipt["category"]) != str:
             return False, "Invalid category format"
-
+        if "status" in receipt and receipt["status"] not in ["verified", "unverified"]:
+            return False, "Invalid status format"
         return True, None
