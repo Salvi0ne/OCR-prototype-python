@@ -1,8 +1,10 @@
 from functools import wraps
+from typing import Union
 import uuid
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from datetime import datetime
+from icecream import ic
 
 db = SQLAlchemy()
 
@@ -25,7 +27,7 @@ class Receipt(db.Model):
             "status": self.status,
             "date": self.date,
             "date_created": self.date_created,
-            "date_updated": self.date_updated
+            "date_updated": self.date_updated,
         }
 
     def __repr__(self):
@@ -74,6 +76,28 @@ class Receipt(db.Model):
             )
             db.session.commit()
             return True, "Receipts saved successfully"
+        except Exception as e:
+            db.session.rollback()
+            return False, str(e)
+
+    @staticmethod
+    def edit(receipt_data) -> Union[bool, str]:
+        try:
+
+            is_valid, error_message = Receipt.validate_receipt_data(receipt_data)
+            if not is_valid:
+                return False, error_message
+
+            receipt = Receipt.query.get(receipt_data["id"])
+            if not receipt:
+                return False, "Receipt not found"  # Invalid receipt
+            receipt.date = receipt_data["date"]
+            receipt.category = receipt_data["category"]
+            receipt.total_amount = float(receipt_data["total_amount"])
+            receipt.date_updated = datetime.now()
+            db.session.add(receipt)
+            db.session.commit()
+            return True, receipt.to_dict()
         except Exception as e:
             db.session.rollback()
             return False, str(e)
@@ -143,6 +167,21 @@ class Receipt(db.Model):
             return False, "Invalid total_amount format"
         if type(receipt["category"]) != str:
             return False, "Invalid category format"
-        if "status" in receipt and receipt["status"] not in ["verified", "unverified"]:
-            return False, "Invalid status format"
+        # if "status" in receipt and receipt["status"] not in ["verified", "unverified"]:
+        #     return False, "Invalid status format"
         return True, None
+
+    @staticmethod
+    def submit_receipts_to_verify(id_array):
+        try:
+            for id in id_array:
+                receipt = Receipt.query.get(id)
+                if not receipt:
+                    continue
+                receipt.status = "verified"
+                db.session.add(receipt)
+                db.session.commit()
+            return True, "Receipts submitted for verification successfully"
+        except Exception as e:
+            db.session.rollback()
+            return False, str(e)
