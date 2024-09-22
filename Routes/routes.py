@@ -1,4 +1,5 @@
 from Models.models import Receipt as ReceiptModel
+from constant import BASED_URL
 from flask import Blueprint, request, jsonify, send_file
 from Services.receipt_processor import process_list_of_receipts, process_receipt
 from responses.factory.Success import Success
@@ -11,8 +12,6 @@ import pandas as pd
 import io
 
 routes = Blueprint("routes", __name__)
-
-BASED_URL = "/api/"
 
 
 # url: http://127.0.0.1:5001/api/extract_receipts

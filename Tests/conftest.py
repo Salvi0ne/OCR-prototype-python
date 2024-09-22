@@ -1,6 +1,6 @@
 import pytest
 from flask import Flask
-from Models.models import db
+from Models.models import Receipt, db
 from app import app as flask_app
 import logging
 
@@ -44,6 +44,21 @@ def runner(app):
 @pytest.fixture
 def init_database(app):
     """Initialize the database with some data if theres any..."""
-    yield
+    r_arr = []
+    r_arr.append(Receipt(date="2022-01-01", category="Food", total_amount=15.0, status="unverified"))
+    r_arr.append( Receipt(date="2022-02-01", category="Dining", total_amount=20.0, status="unverified"))
+    r_arr.append( Receipt(date="2022-03-01", category="Food", total_amount=25.0, status="unverified"))
+    r_arr.append( Receipt(date="2022-04-01", category="Food", total_amount=30.0, status="verified"))
+    r_arr.append( Receipt(date="2022-05-01", category="Food", total_amount=35.0, status="verified"))
+    
+    r_arr.append(Receipt(date="2022-01-02", category="Toll", total_amount=16.0, status="verified"))
+    r_arr.append(Receipt(date="2022-02-02", category="Gas", total_amount=40.0, status="verified"))
+    r_arr.append(Receipt(date="2022-03-02", category="Gas", total_amount=50.0, status="verified"))
+    r_arr.append(Receipt(date="2022-04-02", category="Gas", total_amount=60.0, status="unverified"))
+    r_arr.append(Receipt(date="2022-05-02", category="Hotel", total_amount=66.0, status="unverified"))
+
+    for r in r_arr:
+        db.session.add(r)
+    yield db
     db.session.remove()
     db.drop_all()
