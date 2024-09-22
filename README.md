@@ -1,123 +1,16 @@
-# OCR Receipt Processor
 
-### DEV
+# Backend (Python)
 
-This Python script processes receipt images using OCR technology. It extracts date and total amount information, categorizes spending, and saves the data to an Excel file. Features include:
+This is the backend API for the OCR application, built using Python and Flask.
 
-- Image preprocessing
-- Text extraction using Tesseract OCR
-- Date and total amount parsing
-- Spending categorization
-- User confirmation of extracted data
-- Excel output
+# Frontend (React Native)
 
-`Requirements: OpenCV, Pytesseract, Pillow, pandas, openpyxl, postgresql, pip install flask flask_sqlalchemy psycopg2-binary python-dotenv - for app.py`
+This is the mobile app for the OCR application, built using React Native.
+## Deployment
 
--  Install Python 3.8 or higher if not already installed.
-
--  Clone the repository (if not already done):
-   git clone [repository_url]
-   cd [repository_name]
-
--  Create a virtual environment:
-   python -m venv venv
-
--  Activate the virtual environment:
-   - On Windows: venv\Scripts\activate
-   - On macOS/Linux: source venv/bin/activate
-
--  Install required packages:
-   pip install -r requirements.txt
-
--  Place the .env file in the project root directory (this file should be provided to you separately).
-
--  Download the Cloud SQL Proxy:
-   - Go to: https://cloud.google.com/sql/docs/mysql/connect-admin-proxy#install
-   - Download the appropriate version for your operating system
-   - Rename the downloaded file to "cloud_sql_proxy" (add .exe extension on Windows if it's not already there)
-   - Move the file to the project root directory
-
--  Run the Cloud SQL Proxy:
-   - Open a command prompt/terminal in the project directory
-   - Run: cloud_sql_proxy chrome-era-432100-q9:us-central1:receipts-data --port 5433
-   - Keep this window open while working on the project
-
--  In a new command prompt/terminal, activate the virtual environment (step and run the Flask app:
-   python app.py
-
--  To process a receipt, run in another command prompt/terminal (with venv activated):
-    python test.py
-
--  To fetch data from the database, run:
-    python fetchfromdb.py
-
-Note: Always ensure the Cloud SQL Proxy is running when working with the application.
-
-### To run server, run on your terminal:
+To deploy this project run
 
 ```bash
-python -m app_dev.py
-```
-Or
-```bash
-python3 -m app_dev.py
+  npm run deploy
 ```
 
-
-## Design
-
-- Go to Design/OCR.excalidraw, export this file to https://excalidraw.com/ or click here [excalidraw](https://excalidraw.com/) to see the design..
-
-## LINK
-https://github.com/Salvi0ne/OCR-prototype-python
-
-## File Naming Conventions
-- https://google.github.io/styleguide/pyguide.html#3164-guidelines-derived-from-guidos-recommendations
-
-## Test
-
-**Install `pytest`** first:
-```bash
-pip install pytest
-```
-or
-```bash
-pip3 install pytest
-```
-
-### To run all Tests:
-
-```bash
-python -m pytest
-```
-Or
-```bash
-python3 -m pytest
-```
-
-### Every test file should have:
-- prefix file name ( eg: test_*.py )
-- file name use `snake_case` ( eg: test_snake_case )
-- test class use `PascalCase` ( eg: class TestPascalCase(unittest.TestCase) )
-
-## Features
-
-### PostgreSQL Database Connection
-
-To configure the PostgreSQL database connection, follow these steps:
-
-1. Add the following configuration to your `.env` file:
-
-    ```plaintext
-    DATABASE_URL=postgresql://<username>:<password>@<host>/<database_name>
-    ```
-
-2. Replace the placeholders with the appropriate values:
-    - **`<username>`**: Your PostgreSQL username (e.g., `postgres_local`).
-    - **`<password>`**: The password for the PostgreSQL user (leave blank if not required).
-    - **`<host>`**: The database host (e.g., `localhost` for local development).
-    - **`<database_name>`**: The name of your PostgreSQL database (e.g., `hello_world`).
-
-**Example**:
-```plaintext
-DATABASE_URL=postgresql://postgres_local:abc123@localhost/hello_world
