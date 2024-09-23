@@ -57,7 +57,7 @@ To configure the PostgreSQL database connection, follow these steps:
     - **`<database_name>`**: The name of your PostgreSQL database (e.g., `hello_world`)
 
 ### To Run All Tests:
-- Use either `python` or `python3`:
+ Use either `python` or `python3`:
     ```bash
     python -m pytest -s
     ```
@@ -68,7 +68,7 @@ To configure the PostgreSQL database connection, follow these steps:
 
 ***Note:*** There are currently only a few tests available, but more will be added over time.
 
-### Every test file suggestion:
+### Every file suggestion:
 
 File Naming convenstions based on https://google.github.io/styleguide/pyguide.html#3164-guidelines-derived-from-guidos-recommendations
 - prefix file name ( eg: test_*.py )
@@ -147,7 +147,7 @@ For example, to initialize the system, you can use the following command:
   - `status`: Must be either `verified` or `unverified`.
 
 **Response:**
-  - Returns all receipts with the specified status. If the status is invalid, an error message is returned.
+  - Returns all receipts with the specified status.
 
 **Example Response:**
 ```json
@@ -181,7 +181,6 @@ For example, to initialize the system, you can use the following command:
   - `files`: List of image files to process.
 
 **Response:**
-  - Returns a success message if images are processed successfully, otherwise returns an error.
-
+  - """Extract receipts from image"""
 
 ## ##DEV## UPDATE TIME TO TIME 
