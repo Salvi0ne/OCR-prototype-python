@@ -26,6 +26,7 @@ This is an unfinished prototype. I need more time to learn and refine the app. R
 To start the development server:
 ```bash
 npm run start
+```
 
 
 ### Expo
