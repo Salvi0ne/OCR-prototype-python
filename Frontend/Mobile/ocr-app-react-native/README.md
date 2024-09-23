@@ -1,24 +1,30 @@
-# Frontend - OCR react native
+# Frontend - OCR React Native
 
-## Issues And Problem
-- Unable to capture camera in emulator android studio (when capture camera - it capture black screen only)
-- Emulator(android) and phone can't be fully use , only web can use, camera work fine in web but it does not serve the purpose because usually web camera will capture upside down text in view camera
-- Not try xcode Iphone
-- Unable to send file thru API Http for unknown reason  with android phone and emulator andorid. Able to send file thru API  with Web Only
-- there is little or no tests functionality
-- Since it have problem with sending file, Extract Data from receipt, receipt from camera, and extract button unable to function it purpose...
+## Issues and Problems
 
-## Author say
-This is unfinish prototype/product, I can't finish this in a short time ( i need some time to learn  )... for me Reactive Native  have some kind of learning curve (quite daunting and cumbersome experience), .. , because of my lack of experience and knowledge lead me to create imcomplete product...yet to complete...regardless...i will update and fix it time to time.
+- **Android Emulator Camera Issue**: The Android emulator captures a black screen when using the camera.
+- **Limited Functionality on Android Devices**: Both the emulator and physical Android devices can't fully function. The web version works fine, including the camera, but this is not ideal since the web camera often captures text upside down.
+- **No iOS Testing**: The iPhone version has not been tested on Xcode yet.
+- **File Upload Issues**: Unable to send files through the API from both the Android phone and emulator. File uploads only work on the web.
+- **Lack of Tests**: There are few to no tests implemented for the app.
+- **Core Functionality Incomplete**: Due to file upload issues, essential features such as extracting data from receipts, capturing receipts with the camera, and the extract button are not functioning as intended.
 
-## Pre-requirement 
-- Install node js and make sure you can use npm (node package manager)
-- Install dependencies
-  ```bash
-   npm install
-  ```
+## Author's Note
 
-### To Get started
+This is an unfinished prototype. I need more time to learn and refine the app. React Native has a steep learning curve for me, and my lack of experience has resulted in an incomplete product. However, I plan to update and fix issues over time.
+
+## Prerequisites
+
+- Install [Node.js](https://nodejs.org/), ensuring npm (Node Package Manager) is available.
+- Install project dependencies:
+    ```bash
+    npm install
+    ```
+
+## Getting Started
+
+To start the development server:
+```bash
 npm run start
 
 
@@ -26,3 +32,6 @@ npm run start
 - [development build](https://docs.expo.dev/develop/development-builds/introduction/)
 - [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
 - [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
+
+
+This version organizes the content more clearly and polishes the language for better readability. Let me know if you'd like to refine it further!
