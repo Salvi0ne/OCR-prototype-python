@@ -34,4 +34,4 @@ npm run start
 - [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
 
 
-This version organizes the content more clearly and polishes the language for better readability. Let me know if you'd like to refine it further!
+
