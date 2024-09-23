@@ -1,106 +1,44 @@
-# OCR Receipt Processor
+# OCR Receipt Backend
 
-### DEV
+This Python script serves as the backend API for processing receipts.
 
-This Python script processes receipt images using OCR technology. It extracts date and total amount information, categorizes spending, and saves the data to an Excel file. Features include:
+## Prerequisites
 
-- Image preprocessing
-- Text extraction using Tesseract OCR
-- Date and total amount parsing
-- Spending categorization
-- User confirmation of extracted data
-- Excel output
+- Install Python 3.8 or higher if not already installed.
+- Install required dependencies using pip/pip3:
+    ```bash
+    pip3 install -r requirements.txt
+    ```
 
-`Requirements: OpenCV, Pytesseract, Pillow, pandas, openpyxl, postgresql, pip install flask flask_sqlalchemy psycopg2-binary python-dotenv - for app.py`
+- Create a `.env` file with the following environment variables:
 
--  Install Python 3.8 or higher if not already installed.
+  1. `DATABASE_URL` (for Flask SQLAlchemy)
+      **Example**:
+      ```plaintext
+      DATABASE_URL=postgresql://postgres_local:abc123@localhost/hello_world
+      ```
 
--  Clone the repository (if not already done):
-   git clone [repository_url]
-   cd [repository_name]
+  2. `OPENAI_API_KEY` (for accessing OpenAI API)
 
--  Create a virtual environment:
-   python -m venv venv
 
--  Activate the virtual environment:
-   - On Windows: venv\Scripts\activate
-   - On macOS/Linux: source venv/bin/activate
+### Running the Server
 
--  Install required packages:
-   pip install -r requirements.txt
+The script hardcode localhost port ***5001*** 
 
--  Place the .env file in the project root directory (this file should be provided to you separately).
+To change the port - go to `app.py` and change port=` 5001`
 
--  Download the Cloud SQL Proxy:
-   - Go to: https://cloud.google.com/sql/docs/mysql/connect-admin-proxy#install
-   - Download the appropriate version for your operating system
-   - Rename the downloaded file to "cloud_sql_proxy" (add .exe extension on Windows if it's not already there)
-   - Move the file to the project root directory
-
--  Run the Cloud SQL Proxy:
-   - Open a command prompt/terminal in the project directory
-   - Run: cloud_sql_proxy chrome-era-432100-q9:us-central1:receipts-data --port 5433
-   - Keep this window open while working on the project
-
--  In a new command prompt/terminal, activate the virtual environment (step and run the Flask app:
-   python app.py
-
--  To process a receipt, run in another command prompt/terminal (with venv activated):
-    python test.py
-
--  To fetch data from the database, run:
-    python fetchfromdb.py
-
-Note: Always ensure the Cloud SQL Proxy is running when working with the application.
-
-### To run server, run on your terminal:
-
-```bash
-python -m app_dev.py
 ```
-Or
-```bash
-python3 -m app_dev.py
+app.run(host="0.0.0.0", port=5001, debug=True)
 ```
 
 
-## Design
+To start the server, run the following command in your terminal:
 
-- Go to Design/OCR.excalidraw, export this file to https://excalidraw.com/ or click here [excalidraw](https://excalidraw.com/) to see the design..
-
-## LINK
-https://github.com/Salvi0ne/OCR-prototype-python
-
-## File Naming Conventions
-- https://google.github.io/styleguide/pyguide.html#3164-guidelines-derived-from-guidos-recommendations
-
-## Test
-
-**Install `pytest`** first:
-```bash
-pip install pytest
-```
-or
-```bash
-pip3 install pytest
-```
-
-### To run all Tests:
+- Use either `python` or `python3`:
 
 ```bash
-python -m pytest
+python app.py
 ```
-Or
-```bash
-python3 -m pytest
-```
-
-### Every test file should have:
-- prefix file name ( eg: test_*.py )
-- file name use `snake_case` ( eg: test_snake_case )
-- test class use `PascalCase` ( eg: class TestPascalCase(unittest.TestCase) )
-
-## Features
 
 ### PostgreSQL Database Connection
 
@@ -113,11 +51,137 @@ To configure the PostgreSQL database connection, follow these steps:
     ```
 
 2. Replace the placeholders with the appropriate values:
-    - **`<username>`**: Your PostgreSQL username (e.g., `postgres_local`).
-    - **`<password>`**: The password for the PostgreSQL user (leave blank if not required).
-    - **`<host>`**: The database host (e.g., `localhost` for local development).
-    - **`<database_name>`**: The name of your PostgreSQL database (e.g., `hello_world`).
+    - **`<username>`**: Your PostgreSQL username (e.g., `postgres_local`)
+    - **`<password>`**: The password for the PostgreSQL user (leave blank if not required)
+    - **`<host>`**: The database host (e.g., `localhost` for local development)
+    - **`<database_name>`**: The name of your PostgreSQL database (e.g., `hello_world`)
 
-**Example**:
-```plaintext
-DATABASE_URL=postgresql://postgres_local:abc123@localhost/hello_world
+### To Run All Tests:
+- Use either `python` or `python3`:
+    ```bash
+    python -m pytest -s
+    ```
+    ***Or***
+    ```bash
+    python3 -m pytest -s
+    ```
+
+***Note:*** There are currently only a few tests available, but more will be added over time.
+
+### Every test file suggestion:
+
+File Naming convenstions based on https://google.github.io/styleguide/pyguide.html#3164-guidelines-derived-from-guidos-recommendations
+- prefix file name ( eg: test_*.py )
+- file name use `snake_case` ( eg: test_snake_case )
+- test class use `PascalCase` ( eg: class TestPascalCase(unittest.TestCase) ) 
+
+## LINK
+https://github.com/Salvi0ne/OCR-prototype-python
+
+### OPTIONAL
+
+-  Create a virtual environment:
+   python -m venv venv
+
+-  Activate the virtual environment:
+   - On Windows: venv\Scripts\activate
+   - On macOS/Linux: source venv/bin/activate
+
+
+-  Download the Cloud SQL Proxy:
+   - Go to: https://cloud.google.com/sql/docs/mysql/connect-admin-proxy#install
+   - Download the appropriate version for your operating system
+   - Rename the downloaded file to "cloud_sql_proxy" (add .exe extension on Windows if it's not already there)
+   - Move the file to the project root directory
+
+-  Run the Cloud SQL Proxy:
+   - Open a command prompt/terminal in the project directory
+   - Run: cloud_sql_proxy chrome-era-432100-q9:us-central1:receipts-data --port 5433
+   - Keep this window open while working on the project 
+
+
+### API DOCUMENTATION : 
+
+
+***Response Structure***
+
+- Eg Error Structure:
+```json
+{ 
+    "code": 400,
+    "data": null,
+    "message": "",
+    "messages": [],
+    "status_code": "Bad Request"
+}
+```
+
+- Eg Success Structure:
+```json
+{
+    "code": 200,
+    "data": null,
+    "message": "OK",
+    "messages": [],
+    "status_code": ["OK"]
+}
+```
+---
+
+To test the API endpoints, you can use a tool like curl or a REST client like Postman.
+For example, to initialize the system, you can use the following command:
+`curl -X GET http://127.0.0.1:5001/api/initx`
+
+
+---
+
+
+***Backend/Routes/routes.py:***
+
+#### 1. Get All Receipts by Status
+**Endpoint:** `GET /api/receipts/<string:status>`
+
+**Example Endpoint:** http://127.0.0.1:5001/api/receipts/verified
+
+ **Parameters:**
+  - `status`: Must be either `verified` or `unverified`.
+
+**Response:**
+  - Returns all receipts with the specified status. If the status is invalid, an error message is returned.
+
+**Example Response:**
+```json
+{
+    "code": 200,
+    "data": [
+        {
+            "id": "c433ca2d-0f06-4d43-acb9-3698f2e828a2",
+            "total_amount": 10.10,
+            "category": "dining",
+            "status": "unverified",
+            "date": "10/10/2024",
+            "date_created": "2024-09-23T10:15:30",
+            "date_updated": null,
+        },
+
+    ],
+    "message": "Retrieved Receipts status: unverified",
+    "messages": [],
+    "status_code": ["OK"]
+}
+```
+
+---
+#### 2. Extract Receipts from Image
+**Endpoint:** `POST /api/extract_receipts`
+
+**Example Endpoint:** http://127.0.0.1:5001/api/extract_receipts
+
+**Body:**
+  - `files`: List of image files to process.
+
+**Response:**
+  - Returns a success message if images are processed successfully, otherwise returns an error.
+
+
+## ##DEV## UPDATE TIME TO TIME 
